@@ -29,9 +29,14 @@ const StyledSection = styled.section`
   }
 `;
 
+const TotalPrice = () => {
+  const totalPrice = useSelector(selectTotalPrice);
+
+  return <span>{totalPrice}$</span>;
+};
+
 export const CartList = () => {
   const cartIds = useSelector(selectCartItemsIds);
-  const totalPrice = useSelector((state) => selectTotalPrice(state));
 
   const cartItems = cartIds.map((itemId) => (
     <CartItem key={itemId} itemId={itemId} />
@@ -43,7 +48,9 @@ export const CartList = () => {
         <span>Your cart is empty</span>
       ) : (
         <React.Fragment>
-          <h2>Total price: {totalPrice}$</h2>
+          <h2>
+            Total price: <TotalPrice />
+          </h2>
           {cartItems}
           <div className="button-container">
             <Link to="/summary">

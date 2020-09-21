@@ -64,6 +64,7 @@ export const {
   selectAll: selectAllCartItems,
   selectById: selectCartItemById,
   selectIds: selectCartItemsIds,
+  selectTotal: selectCartTotal,
 } = cartAdapter.getSelectors((state) => state.cart);
 
 export const {

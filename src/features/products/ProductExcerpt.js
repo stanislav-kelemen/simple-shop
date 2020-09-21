@@ -1,9 +1,9 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, {memo} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import styled from "styled-components";
 
-import { selectIsOutVisible, selectProductById } from "./productsSlice";
-import { addToCart, selectCartItemById } from "../cart/cartSlice";
+import {selectIsHiddenById, selectProductById} from "./productsSlice";
+import {addToCart, selectCartItemById} from "../cart/cartSlice";
 
 const StyledDiv = styled.div`
   padding: 15px 10px;
@@ -52,15 +52,16 @@ const ButtonContainer = styled.div`
   }
 `;
 
-export const ProductExcerpt = ({ productId }) => {
+export const ProductExcerpt = memo(({productId}) => {
   const dispatch = useDispatch();
   const product = useSelector((state) => selectProductById(state, productId));
   const cartItem = useSelector((state) => selectCartItemById(state, productId));
-  const isOutVisible = useSelector((state) => selectIsOutVisible(state));
+  const isHidden = useSelector((state) => selectIsHiddenById(state, productId));
 
   const itemsInStock = product.available;
 
   const isAvailable = itemsInStock > 0;
+
   const isFew = itemsInStock < 5;
   const isMaxInCart = cartItem && cartItem.itemCount >= itemsInStock;
 
@@ -72,7 +73,7 @@ export const ProductExcerpt = ({ productId }) => {
   };
 
   return (
-    <StyledDiv className={!isOutVisible && !isAvailable ? "hidden" : ""}>
+    <StyledDiv className={isHidden ? 'hidden' : ''}>
       <h3>{product.name}</h3>
       <div>
         Price: <i>{product.price}</i>
@@ -103,5 +104,5 @@ export const ProductExcerpt = ({ productId }) => {
         )}
       </ButtonContainer>
     </StyledDiv>
-  );
-};
+  )
+});

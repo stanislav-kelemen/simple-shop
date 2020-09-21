@@ -1,10 +1,4 @@
-import {
-  createAsyncThunk,
-  createEntityAdapter,
-  createSelector,
-  createSlice,
-  nanoid,
-} from "@reduxjs/toolkit";
+import {createAsyncThunk, createEntityAdapter, createSelector, createSlice, nanoid,} from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const fetchProducts = createAsyncThunk(
@@ -13,6 +7,7 @@ export const fetchProducts = createAsyncThunk(
     const result = await axios.get(`${process.env.PUBLIC_URL}/products.json`);
     return Object.values(result.data).map((obj) => {
       obj.id = nanoid();
+      obj.hidden = (obj.available <= 0)
       return obj;
     });
   }
@@ -49,23 +44,23 @@ const productsSlice = createSlice({
     },
     changeSortBy: {
       reducer(state, action) {
-        const { sortBy } = action.payload;
+        const {sortBy} = action.payload;
         state.sortBy = sortBy;
       },
       prepare(sortBy) {
         return {
-          payload: { sortBy },
+          payload: {sortBy},
         };
       },
     },
     changeIsAscending: {
       reducer(state, action) {
-        const { isAscending } = action.payload;
+        const {isAscending} = action.payload;
         state.isAscending = isAscending;
       },
       prepare(isAscending) {
         return {
-          payload: { isAscending },
+          payload: {isAscending},
         };
       },
     },
@@ -143,14 +138,22 @@ export const {
 } = productsAdapter.getSelectors((state) => state.products);
 
 export const selectIsOutVisible = createSelector(
-  [(state) => state.products.isOutVisible],
+  (state) => state.products.isOutVisible,
   (isOutVisible) => isOutVisible
 );
 
 export const selectAvailableById = createSelector(
-  (state, productId) => selectProductById(state, productId).available,
-  (productAvailable) => productAvailable
+  (state, productId) => selectProductById(state, productId),
+  (product) => product.available
 );
+
+export const selectIsHiddenById = createSelector(
+  [
+    (state, productId) => selectAvailableById(state, productId),
+    selectIsOutVisible
+  ],
+  (available, isOutVisible) => available <= 0 && !isOutVisible
+)
 
 export const selectIsAscending = createSelector(
   [(state) => state.products.isAscending],

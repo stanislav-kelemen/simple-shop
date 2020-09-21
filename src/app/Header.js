@@ -41,10 +41,18 @@ const StyledHeader = styled.header`
   }
 `;
 
-export const Header = () => {
+const CartCounter = () => {
   const location = useLocation();
-  const dispatch = useDispatch();
   const cartCount = useSelector((state) => selectCartCount(state));
+
+  const isShoppingFinished = () =>
+    location.pathname === "/summary" ? 0 : cartCount;
+
+  return <span>{isShoppingFinished()}</span>;
+};
+
+export const Header = () => {
+  const dispatch = useDispatch();
 
   const highlightNavLink = (event) => {
     const clickedElementId = event.target.id;
@@ -52,9 +60,6 @@ export const Header = () => {
       return;
     dispatch(changeActive(event.target.id));
   };
-
-  const isShoppingFinished = () =>
-    location.pathname === "/summary" ? 0 : cartCount;
 
   const isDialogSupported = () =>
     typeof HTMLDialogElement === "function" && (
@@ -73,7 +78,9 @@ export const Header = () => {
       <div className="header-right">
         {isDialogSupported()}
         <Link id="cart" to="/cart">
-          <h2>Cart {isShoppingFinished()}</h2>
+          <h2>
+            Cart <CartCounter />
+          </h2>
         </Link>
       </div>
     </StyledHeader>

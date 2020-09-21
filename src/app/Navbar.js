@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import {
   changeActive,
-  selectNavigationIds,
+  selectActiveById,
 } from "../features/navigation/navigationSlice";
-import { NavLink } from "../features/navigation/NavLink";
 
 const StyledNav = styled.nav`
   display: flex;
@@ -30,19 +29,25 @@ const StyledNav = styled.nav`
   }
 `;
 
+const NavLink = ({ id, to, content }) => {
+  const active = useSelector((state) => selectActiveById(state, id));
+
+  return (
+    <Link id={id} to={to} className={active ? "active" : ""}>
+      {content}
+    </Link>
+  );
+};
+
 export const Navbar = () => {
   const dispatch = useDispatch();
+
   const history = useHistory();
-  const navigationIds = useSelector(selectNavigationIds);
 
   useEffect(() => {
     if (history.location.pathname === "/") return;
     history.push("/");
   }, [history]);
-
-  const links = navigationIds.map((linkId) => (
-    <NavLink key={linkId} linkId={linkId} />
-  ));
 
   const highlightNavLink = (event) => {
     if (event.target.tagName !== "A") return;
@@ -50,5 +55,10 @@ export const Navbar = () => {
     dispatch(changeActive(event.target.id));
   };
 
-  return <StyledNav onClick={highlightNavLink}>{links}</StyledNav>;
+  return (
+    <StyledNav onClick={highlightNavLink}>
+      <NavLink id="products" to="/" content="Products" />
+      <NavLink id="cart" to="/cart" content="Cart" />
+    </StyledNav>
+  );
 };

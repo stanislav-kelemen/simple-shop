@@ -59,41 +59,60 @@ const StyledDiv = styled.div`
   }
 `;
 
-export const SortBy = () => {
+const SelectSortBy = () => {
   const dispatch = useDispatch();
-  const isAscending = useSelector((state) => selectIsAscending(state));
-  const sortBy = useSelector((state) => selectSortBy(state));
-  const isOutVisible = useSelector((state) => selectIsOutVisible(state));
+  const sortBy = useSelector(selectSortBy);
 
   return (
-    <StyledDiv>
-      <select
-        onChange={(e) => {
-          dispatch(changeSortBy(e.target.value));
-          dispatch(sortProducts());
-        }}
-        defaultValue={sortBy}
-      >
-        <option value="name">Name</option>
-        <option value="price">Price</option>
-        <option value="availability">Available</option>
-      </select>
-      <button
-        onClick={() => {
-          dispatch(changeIsAscending(!isAscending));
-          dispatch(reverseOrder());
-        }}
-      >
-        {isAscending ? "↑" : "↓"}
-      </button>
-      <div className="checkbox-container">
-        <input
-          type="checkbox"
-          onClick={() => dispatch(changeIsOutVisible())}
-          defaultChecked={isOutVisible}
-        />
-        <label>Show non-available</label>
-      </div>
-    </StyledDiv>
+    <select
+      onChange={(e) => {
+        dispatch(changeSortBy(e.target.value));
+        dispatch(sortProducts());
+      }}
+      defaultValue={sortBy}
+    >
+      <option value="name">Name</option>
+      <option value="price">Price</option>
+      <option value="availability">Available</option>
+    </select>
   );
 };
+const OrderButton = () => {
+  const dispatch = useDispatch();
+  const isAscending = useSelector(selectIsAscending);
+
+  return (
+    <button
+      onClick={() => {
+        dispatch(changeIsAscending(!isAscending));
+        dispatch(reverseOrder());
+      }}
+    >
+      {isAscending ? "↑" : "↓"}
+    </button>
+  );
+};
+
+const OutCheckbox = () => {
+  const dispatch = useDispatch();
+  const isOutVisible = useSelector(selectIsOutVisible);
+
+  return (
+    <div className="checkbox-container">
+      <input
+        type="checkbox"
+        onClick={() => dispatch(changeIsOutVisible())}
+        defaultChecked={isOutVisible}
+      />
+      <label>Show non-available</label>
+    </div>
+  );
+};
+
+export const SortBy = () => (
+  <StyledDiv>
+    <SelectSortBy />
+    <OrderButton />
+    <OutCheckbox />
+  </StyledDiv>
+);
