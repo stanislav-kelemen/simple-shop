@@ -1,5 +1,5 @@
 # simple-shop
 
-simple shop using redux
+Simple shop using React and Redux
 
-check it online at https://stanislav-kelemen.github.io/simple-shop
+Check it online at https://stanislav-kelemen.github.io/simple-shop
